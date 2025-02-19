@@ -1,0 +1,22 @@
+[project]
+name = "ocr-playground"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Douglas Domingos",email = "doug.domingossilva@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.10,<4"
+dependencies = [
+    "pytesseract (>=0.3.13,<0.4.0)",
+    "pillow (>=11.1.0,<12.0.0)",
+    "python-doctr (>=0.11.0,<0.12.0)"
+]
+
+[tool.poetry]
+packages = [{include = "ocr_playground", from = "src"}]
+package-mode = false
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
