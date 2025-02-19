@@ -1,7 +1,18 @@
 from PIL import Image
 from pytesseract import image_to_string
+from pdf2image import convert_from_path
 from os import path
 from sys import argv
+
+
+def convert_pdf_to_images(file_path: str):
+    image_list = None
+
+    if path.isfile(file_path):
+        image_list = convert_from_path(file_path)
+
+    return image_list
+
 
 def extract_text_from_image(img_path: str):
     file_content = None
@@ -20,11 +31,8 @@ def write_output_to_file(content: str):
 
 
 if __name__ == '__main__':
-    img_path = argv[1]
-    file_content = extract_text_from_image(img_path)
+    file_path = argv[1]
+    file_pages = convert_pdf_to_images(file_path)
 
-    if file_content == None:
-        print('Unable to read image ', img_path)
-    else:
-        write_output_to_file(file_content)
-        print('Text contents written to output file.')
+    for page in file_pages:
+        print(image_to_string(page))
