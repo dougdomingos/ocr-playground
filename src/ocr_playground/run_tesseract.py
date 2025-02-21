@@ -1,38 +1,41 @@
-from PIL import Image
-from pytesseract import image_to_string
-from pdf2image import convert_from_path
 from os import path
 from sys import argv
 
-
-def convert_pdf_to_images(file_path: str):
-    image_list = None
-
-    if path.isfile(file_path):
-        image_list = convert_from_path(file_path)
-
-    return image_list
+from pdf2image import convert_from_path
+from PIL import Image
+from pytesseract import image_to_string
 
 
-def extract_text_from_image(img_path: str):
-    file_content = None
+def process_file(file_path: str) -> dict:
+    pages = []
+    extracted_texts = []
 
-    if path.isfile(img_path):
-        file_content = image_to_string(Image.open(img_path))
+    if not path.isfile(file_path):
+        return None
 
-    return file_content
+    elif file_path.lower().endswith(".pdf"):
+        pages = convert_from_path(file_path)
+
+    else:
+        pages.append(Image.open(file_path))
+
+    for page in pages:
+        extracted_texts.append(image_to_string(page))
+
+    return extracted_texts
 
 
-def write_output_to_file(content: str):
-    outfile_path = path.join(path.dirname(path.abspath(__file__)), 'output.txt')
-    
-    with open(outfile_path, 'w') as outfile:
-        outfile.write(content)
+def write_output_to_file(extracted_contents: list) -> str:
+    outfile_path = path.join(path.dirname(path.abspath(__file__)), "output.txt")
+
+    with open(outfile_path, "w") as outfile:
+        outfile.writelines(extracted_contents)
+
+    return outfile_path
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     file_path = argv[1]
-    file_pages = convert_pdf_to_images(file_path)
-
-    for page in file_pages:
-        print(image_to_string(page))
+    extracted_text = process_file(file_path)
+    outfile_path = write_output_to_file(extracted_text)
+    print(f"Contents from {argv[1]} extracted to {outfile_path}")
