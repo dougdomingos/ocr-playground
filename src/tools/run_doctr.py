@@ -1,39 +1,70 @@
 from os import path
+from plistlib import InvalidFileException
 from sys import argv
 
 from doctr.io import DocumentFile
 from doctr.models import ocr_predictor
 
-def process_file(file_path: str) -> dict:
-    document = None
-    extracted_text = None
-    predictor = ocr_predictor(pretrained=True)
 
-    if not path.isfile(file_path):
-        return None
+class TesseractRunner:
+    def __init__(self, outdir: str):
+        """Create a new TesseractRunner instance.
 
-    elif file_path.lower().endswith(".pdf"):
-        document = DocumentFile.from_pdf(file_path)
+        Args:
+            outdir (str): The directory in which the output files shall be created.
+        """
 
-    else:
-        document = DocumentFile.from_images(file_path)
+        self._outdir = outdir
+        self._predictor = ocr_predictor(pretrained=True)
 
-    extracted_text = predictor(document).render()
+    def process_file(self, file_path: str, print_output=True):
+        """Given a PDF or image file, extracts its contents with the OCR tool.
 
-    return extracted_text
+        Args:
+            file_path (str): The path to the target file (must be in one of the following formats: PDF, JPG, PNG).
+            print_output (bool, optional): Determines if the contents should be displayed after the extraction. Defaults to True.
 
+        Raises:
+            InvalidFileException: Thrown if the provided file does not match the specified formats.
+        """
 
-def write_output_to_file(extracted_contents: list) -> str:
-    outfile_path = path.join(path.dirname(path.abspath(__file__)), "output.txt")
+        if not path.isfile(file_path):
+            raise InvalidFileException(
+                "The provided file must be in one of the following formats: PDF, JPG, PNG"
+            )
 
-    with open(outfile_path, "w") as outfile:
-        outfile.writelines(extracted_contents)
+        extracted_text = self._extract_contents(file_path)
+        self._write_output_to_file(extracted_text)
 
-    return outfile_path
+        if print_output:
+            print(extracted_text)
 
+    def _extract_contents(self, file_path: str):
+        """_summary_
 
-if __name__ == "__main__":
-    file_path = argv[1]
-    extracted_text = process_file(file_path)
-    outfile_path = write_output_to_file(extracted_text)
-    print(f"Contents from {argv[1]} extracted to {outfile_path}")
+        Args:
+            file_path (str): _description_
+
+        Returns:
+            _type_: _description_
+        """
+
+        document = None
+        extracted_text = None
+
+        if file_path.lower().endswith(".pdf"):
+            document = DocumentFile.from_pdf(file_path)
+        else:
+            document = DocumentFile.from_images(file_path)
+
+        extracted_text = self._predictor(document).render()
+
+        return extracted_text
+
+    def _save_output_to_file(extracted_contents: str) -> str:
+        outfile_path = path.join(path.dirname(path.abspath(__file__)), "output.txt")
+
+        with open(outfile_path, "w") as outfile:
+            outfile.writelines(extracted_contents)
+
+        return outfile_path
