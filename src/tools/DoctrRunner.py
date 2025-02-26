@@ -1,20 +1,14 @@
 from os import path
-from plistlib import InvalidFileException
 from sys import argv
 
 from doctr.io import DocumentFile
 from doctr.models import ocr_predictor
 
 
-class TesseractRunner:
-    def __init__(self, outdir: str):
-        """Create a new TesseractRunner instance.
+class DoctrRunner:
+    def __init__(self):
+        """Create a new DoctrRunner instance."""
 
-        Args:
-            outdir (str): The directory in which the output files shall be created.
-        """
-
-        self._outdir = outdir
         self._predictor = ocr_predictor(pretrained=True)
 
     def process_file(self, file_path: str, print_output=True):
@@ -29,24 +23,23 @@ class TesseractRunner:
         """
 
         if not path.isfile(file_path):
-            raise InvalidFileException(
+            raise ValueError(
                 "The provided file must be in one of the following formats: PDF, JPG, PNG"
             )
 
         extracted_text = self._extract_contents(file_path)
-        self._write_output_to_file(extracted_text)
 
         if print_output:
             print(extracted_text)
 
     def _extract_contents(self, file_path: str):
-        """_summary_
+        """Extracts all text from the provided file.
 
         Args:
-            file_path (str): _description_
+            file_path (str): The path to the target file,
 
         Returns:
-            _type_: _description_
+            str: The text content detected within the file.
         """
 
         document = None
@@ -61,10 +54,8 @@ class TesseractRunner:
 
         return extracted_text
 
-    def _save_output_to_file(extracted_contents: str) -> str:
-        outfile_path = path.join(path.dirname(path.abspath(__file__)), "output.txt")
 
-        with open(outfile_path, "w") as outfile:
-            outfile.writelines(extracted_contents)
-
-        return outfile_path
+if __name__ == "__main__":
+    ocr_runner = DoctrRunner()
+    file_path = argv[1]
+    ocr_runner.process_file(file_path, print_output=True)
