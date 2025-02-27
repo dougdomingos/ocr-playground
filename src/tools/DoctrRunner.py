@@ -4,6 +4,8 @@ from sys import argv
 from doctr.io import DocumentFile
 from doctr.models import ocr_predictor
 
+from utils.runtime_telemetry import measure_time
+
 
 class DoctrRunner:
     def __init__(self):
@@ -32,6 +34,7 @@ class DoctrRunner:
         if print_output:
             print(extracted_text)
 
+    @measure_time(ocr_engine="DocTR")
     def _extract_contents(self, file_path: str):
         """Extracts all text from the provided file.
 
