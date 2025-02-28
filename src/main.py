@@ -1,18 +1,21 @@
-from utils.input_parser import get_cli_arguments
+from os import listdir, path
+
 from tools.DoctrRunner import DoctrRunner
 from tools.TesseractRunner import TesseractRunner
+from utils.input_parser import get_cli_arguments
 
-tesseract = TesseractRunner()
-doctr = DoctrRunner()
 args = get_cli_arguments()
+engines = {"tesseract": TesseractRunner(), "doctr": DoctrRunner()}
 
-match args.ocr_engine:
-    case "tesseract":
-        tesseract.process_file(args.file, print_output=args.print_output)
-    case "doctr":
-        doctr.process_file(args.file, print_output=args.print_output)
-    case "all":
-        tesseract.process_file(args.file, print_output=args.print_output)
-        doctr.process_file(args.file, print_output=args.print_output)        
-    case _:
-        print("Invalid OCR engine provided")
+if not args.ocr_engine:
+    raise ValueError("No OCR engine was provided!")
+
+if args.dir:
+    files = [path.join(args.dir, f) for f in listdir(args.dir)]
+
+    for file in files:
+        print(f'File "{path.basename(file)}"', end=": ")
+        engines[args.ocr_engine].process_file(file, print_output=args.print_output)
+
+else:
+    engines[args.ocr_engine].process_file(args.file, print_output=args.print_output)
