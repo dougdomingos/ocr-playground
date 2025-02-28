@@ -5,6 +5,7 @@ from pdf2image import convert_from_path
 from PIL import Image
 from pytesseract import image_to_string
 
+from utils.file_handler import save_output_to_file
 from utils.runtime_telemetry import measure_time
 
 
@@ -33,6 +34,9 @@ class TesseractRunner:
 
         if print_output:
             print(extracted_text)
+        
+        save_output_to_file(file_path, extracted_text)
+
 
     @measure_time(ocr_engine="Tesseract")
     def _extract_contents(self, file_path: str):
