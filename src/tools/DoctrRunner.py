@@ -35,7 +35,8 @@ class DoctrRunner:
         if print_output:
             print(extracted_text)
         
-        save_output_to_file(file_path, extracted_text)
+        save_output_to_file(file_path, extracted_text, engine_name="doctr")
+
 
     @measure_time(ocr_engine="DocTR")
     def _extract_contents(self, file_path: str):

@@ -35,7 +35,7 @@ class TesseractRunner:
         if print_output:
             print(extracted_text)
         
-        save_output_to_file(file_path, extracted_text)
+        save_output_to_file(file_path, extracted_text, engine_name="tesseract")
 
 
     @measure_time(ocr_engine="Tesseract")
