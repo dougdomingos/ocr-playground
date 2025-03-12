@@ -2,7 +2,7 @@ from pdf2image import convert_from_path
 from PIL import Image
 from pytesseract import image_to_string
 
-from tools.abstract_extractor import AbstractExtractor
+from extractors.abstract_extractor import AbstractExtractor
 from utils.runtime_telemetry import measure_time
 
 

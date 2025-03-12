@@ -1,7 +1,7 @@
 from doctr.io import DocumentFile
 from doctr.models import ocr_predictor
 
-from tools.abstract_extractor import AbstractExtractor
+from extractors.abstract_extractor import AbstractExtractor
 from utils.runtime_telemetry import measure_time
 
 

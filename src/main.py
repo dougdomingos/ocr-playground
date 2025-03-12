@@ -1,9 +1,9 @@
 from os import listdir, path
 from typing import Dict
 
-from tools.abstract_extractor import AbstractExtractor
-from tools.doctr import DocTrExtractor
-from tools.tesseract import TesseractExtractor
+from extractors.abstract_extractor import AbstractExtractor
+from extractors.doctr import DocTrExtractor
+from extractors.tesseract import TesseractExtractor
 from utils.input_parser import get_cli_arguments
 
 args = get_cli_arguments()
