@@ -1,11 +1,16 @@
 from os import listdir, path
+from typing import Dict
 
-from tools.DoctrRunner import DoctrRunner
-from tools.TesseractRunner import TesseractRunner
+from tools.abstract_extractor import AbstractExtractor
+from tools.doctr import DocTrExtractor
+from tools.tesseract import TesseractExtractor
 from utils.input_parser import get_cli_arguments
 
 args = get_cli_arguments()
-engines = {"tesseract": TesseractRunner(), "doctr": DoctrRunner()}
+engines: Dict[str, AbstractExtractor] = {
+    "tesseract": TesseractExtractor(),
+    "doctr": DocTrExtractor(),
+}
 
 if not args.ocr_engine:
     raise ValueError("No OCR engine was provided!")
@@ -15,7 +20,7 @@ if args.dir:
 
     for file in files:
         print(f'File "{path.basename(file)}"', end=": ")
-        engines[args.ocr_engine].process_file(file, print_output=args.print_output)
+        engines[args.ocr_engine].run_extractor(file, print_output=args.print_output)
 
 else:
-    engines[args.ocr_engine].process_file(args.file, print_output=args.print_output)
+    engines[args.ocr_engine].run_extractor(args.file, print_output=args.print_output)
